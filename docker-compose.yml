@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: openldap
+    environment:
+      - LDAP_ORGANISATION=MiEmpresa
+      - LDAP_DOMAIN=miempresa.local
+      - LDAP_ADMIN_PASSWORD=admin
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+    networks:
+      - sftpnet
+
+  lam:
+    image: ldapaccountmanager/lam:8.2
+    container_name: ldap_ui
+    ports:
+      - "8080:80"
+    environment:
+      - LAM_LANG=en
+    networks:
+      - sftpnet
+    depends_on:
+      - ldap
+
+  sftpgo:
+    image: drakkan/sftpgo:latest
+    container_name: sftpgo
+    ports:
+      - "2022:2022"      # SFTP port
+      - "8081:8080"      # Admin web UI
+    volumes:
+      - sftp_data:/var/lib/sftpgo
+    environment:
+      SFTPGO_LDAP_ENABLED: "true"
+      SFTPGO_LDAP_SERVER: "ldap://ldap:389"
+      SFTPGO_LDAP_BIND_DN: "cn=admin,dc=miempresa,dc=local"
+      SFTPGO_LDAP_BIND_PASSWORD: "admin"
+      SFTPGO_LDAP_BASE_DN: "dc=miempresa,dc=local"
+      SFTPGO_LDAP_UID_ATTRIBUTE: "uid"
+      SFTPGO_LDAP_FILTER: "(objectClass=inetOrgPerson)"
+      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 10080
+    networks:
+      - sftpnet
+    depends_on:
+      - ldap
+
+volumes:
+  ldap_data:
+  ldap_config:
+  sftp_data:
+
+networks:
+  sftpnet:
