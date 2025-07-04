@@ -1,0 +1,12 @@
+dn: ou=People,dc=miempresa,dc=local
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=miempresa,dc=local
+objectClass: organizationalUnit
+ou: Groups
+
+dn: cn=scp-billers,ou=Groups,dc=miempresa,dc=local
+objectClass: posixGroup
+cn: scp-billers
+gidNumber: 10001
