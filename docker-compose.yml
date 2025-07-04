@@ -25,6 +25,14 @@ services:
       - "8080:80"
     environment:
       - LAM_LANG=en
+      - LDAP_BASE_DN=dc=miempresa,dc=local
+      - LDAP_USERS_DN=ou=people,dc=miempresa,dc=local
+      - LDAP_USER=cn=admin,dc=miempresa,dc=local
+      - LDAP_GROUPS_DN=ou=groups,dc=miempresa,dc=local
+      - LDAP_SERVER=ldap://ldap:389
+      - LDAP_USER=cn=admin,dc=miempresa,dc=local
+      - LAM_PASSWORD=lam
+
     networks:
       - sftpnet
     depends_on:
