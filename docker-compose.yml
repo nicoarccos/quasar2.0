@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
 
+  services:
+
   ldap:
     image: osixia/openldap:1.5.0
     container_name: openldap
@@ -15,9 +17,10 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
+      - ./ldif/50-init.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-init.ldif
     networks:
       - sftpnet
-
+      
   lam:
     image: ldapaccountmanager/lam:8.2
     container_name: ldap_ui
